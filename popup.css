@@ -93,3 +93,8 @@ h1 {
 .switch input:checked + .slider:before {
     transform: translateX(20px);
 }
+
+.support {
+    margin-bottom: 10px;
+}
+

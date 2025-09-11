@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Elden Email",
-  "version": "1.1.1",
-  "description": "Shows an Elden Ring banner when you send an email",
+  "name": "Elden PR",
+  "version": "1.0.0",
+  "description": "Shows an Elden Ring banner when you create a pull request",
   "permissions": ["storage"],
    "action": {
       "default_popup": "popup.html",
@@ -11,14 +11,12 @@
       }
    },
     "host_permissions": [
-      "https://mail.google.com/*",
-      "https://outlook.office.com/*"
+      "https://github.com/*"
     ],
   "content_scripts": [
     {
       "matches": [
-        "https://mail.google.com/*",
-        "https://outlook.office.com/*"
+        "https://github.com/*"
       ],
       "js": ["content.js"],
       "css": ["style.css"]
@@ -29,10 +27,9 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["assets/email_sent_yellow.png", "assets/email_sent_blue.png", "assets/email_sent_red.png","assets/elden_ring_sound.mp3", "assets/Matinia.otf"],
+      "resources": ["assets/pr_created_yellow.png", "assets/pr_created_blue.png", "assets/pr_created_red.png","assets/elden_ring_sound.mp3", "assets/Matinia.otf"],
       "matches": [
-        "https://mail.google.com/*",
-        "https://outlook.office.com/*"
+        "https://github.com/*"
       ]
     }
   ]

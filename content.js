@@ -1,11 +1,11 @@
 
-console.log("Elden Mail Banner content.js loaded!");
+console.log("Elden PR Banner content.js loaded!");
 
 // pre-load the sound file
 const soundUrl = chrome.runtime.getURL("assets/elden_ring_sound.mp3");
 
 // dictionary of "Send" keywords in various languages
-const keywords = ["Invia","Send","傳送","发送","送信","보내기","Enviar","Senden","Envoyer","Отправить","إرسال","ส่ง","Skicka"];
+const keywords = ["Create pull request"];
 
 // default settings
 let soundEnabled = true;
@@ -29,14 +29,12 @@ chrome.storage.onChanged.addListener((changes) => {
 
 
 function showEldenRingBanner() {
-    console.log("Banner function called");
 
     const banner = document.createElement('div');
     banner.id = 'elden-ring-banner';
-    const imgPath = chrome.runtime.getURL(`assets/email_sent_${bannerColor}.png`);
+    const imgPath = chrome.runtime.getURL(`assets/pr_created_${bannerColor}.png`);
     banner.innerHTML = `<img src="${imgPath}" alt="Email Sent">`;
     document.body.appendChild(banner);
-    console.log("Banner appended");
 
     if (soundEnabled) {
         const audio = new Audio(soundUrl);
@@ -51,54 +49,46 @@ function showEldenRingBanner() {
     }, 3000);
 }
 
-// gmail observer
-const gmailObserver = new MutationObserver(() => {
-    document.querySelectorAll('div[role="button"], button[role="button"]').forEach(btn => {
-        // take aria-label, data-tooltip and innerText
-        const label = btn.getAttribute("aria-label") || "";
-        const tooltip = btn.getAttribute("data-tooltip") || "";
-        const text = (btn.innerText || "").trim();
+// github observer
+const githubObserver = new MutationObserver(() => {
 
-        // match: if label, tooltip or text start with a keyword
+    document.querySelectorAll('.hx_create-pr-button').forEach(btn => {
+
+       const span = btn.children[0];
+       const spanText = span ? (span.innerText || "").trim() : "";
+
         const isSendBtn = keywords.some(k =>
-        label.trim().toLowerCase().startsWith(k.toLowerCase()) ||
-        tooltip.trim().toLowerCase().startsWith(k.toLowerCase()) ||
-        text.toLowerCase().startsWith(k.toLowerCase())
+            spanText.toLowerCase().startsWith(k.toLowerCase())
         );
 
         if (isSendBtn && !btn.dataset.eldenRingAttached) {
-        btn.addEventListener("click", () => {
-            console.log("Gmail send button clicked");
-            setTimeout(showEldenRingBanner, 500);
-        });
-        btn.dataset.eldenRingAttached = "true";
-        }
+
+            const DELAY_MS = 500;
+          
+            btn.addEventListener('click', (e) => {
+              if (btn.dataset.skipInterceptor === '1') {
+                delete btn.dataset.skipInterceptor;
+                return;
+              }
+          
+              e.stopImmediatePropagation();
+          
+              setTimeout(() => {
+                showEldenRingBanner();
+          
+                btn.dataset.skipInterceptor = '1';
+          
+              }, DELAY_MS);
+
+              setTimeout(() => {
+                btn.click();
+              }, 3000);
+            }, true); 
+          
+            btn.dataset.eldenRingAttached = 'true';
+          }
     });
 });
-gmailObserver.observe(document.body, { childList: true, subtree: true });
 
-// outlook observer
-const outlookObserver = new MutationObserver(() => {
-    document.querySelectorAll('button, div[role="button"]').forEach(btn => {
-        // take aria-label, data-tooltip and innerText
-        const title = btn.getAttribute("title") || "";
-        const label = btn.getAttribute("aria-label") || "";
-        const text = (btn.innerText || "").trim();
 
-        // match: if label, tooltip or text start with a keyword
-        const isSendBtn = keywords.some(k =>
-        title.trim().toLowerCase().startsWith(k.toLowerCase()) ||
-        label.trim().toLowerCase().startsWith(k.toLowerCase()) ||
-        text.toLowerCase().startsWith(k.toLowerCase())
-        );
-
-        if (isSendBtn && !btn.dataset.eldenRingAttached) {
-        btn.addEventListener('click', () => {
-            console.log("Outlook send button clicked");
-            setTimeout(showEldenRingBanner, 500);
-        });
-        btn.dataset.eldenRingAttached = "true";
-        }
-    });
-});
-outlookObserver.observe(document.body, { childList: true, subtree: true });
+githubObserver.observe(document.body, { childList: true, subtree: true });
