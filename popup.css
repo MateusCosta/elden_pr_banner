@@ -96,5 +96,19 @@ h1 {
 
 .support {
     margin-bottom: 10px;
+    font-size: 12px;
+    text-align: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.support a {
+    color: gold;
+    text-decoration: none;
+}
+
+.support a:hover {
+    text-decoration: underline;
 }
 
