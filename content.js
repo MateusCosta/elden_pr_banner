@@ -33,7 +33,7 @@ function showEldenRingBanner() {
     const banner = document.createElement('div');
     banner.id = 'elden-ring-banner';
     const imgPath = chrome.runtime.getURL(`assets/pr_created_${bannerColor}.png`);
-    banner.innerHTML = `<img src="${imgPath}" alt="Email Sent">`;
+    banner.innerHTML = `<img src="${imgPath}" alt="Pull request created">`;
     document.body.appendChild(banner);
 
     if (soundEnabled) {
